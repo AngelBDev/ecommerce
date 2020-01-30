@@ -36,7 +36,7 @@ export default class SignIn extends Component {
 						type='email'
 						value={this.state.email}
 						label='email'
-						onChange={this.handleChange}
+						handleChange={this.handleChange}
 						required
 					/>
 
@@ -45,7 +45,7 @@ export default class SignIn extends Component {
 						type='password'
 						value={this.state.password}
 						label='password'
-						onChange={this.handleChange}
+						handleChange={this.handleChange}
 						required
 					/>
 					<div className='buttons'>

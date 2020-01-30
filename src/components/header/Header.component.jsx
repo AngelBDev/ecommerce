@@ -19,14 +19,14 @@ const Header = ({ currentUser }) => {
 				</Link>
 
 				{currentUser ? (
-					<button
+					<div
 						className='option'
 						onClick={() => {
 							auth.signOut();
 						}}
 					>
 						SIGN OUT
-					</button>
+					</div>
 				) : (
 					<Link className='option' to='/sign-in'>
 						SIGN IN

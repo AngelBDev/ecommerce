@@ -11,7 +11,7 @@ import ShopPage from './pages/shop/Shop.component';
 import Header from './components/header/Header.component';
 
 //Firebase
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 class App extends React.Component {
 	constructor(props) {
@@ -25,8 +25,21 @@ class App extends React.Component {
 	closeConnect = null;
 
 	componentDidMount() {
-		this.closeConnect = auth.onAuthStateChanged((user) => {
-			this.setState({ currentUser: user });
+		this.closeConnect = auth.onAuthStateChanged(async (userAuth) => {
+			if (userAuth) {
+				const userRef = await createUserProfileDocument(userAuth);
+				userRef.onSnapshot((snapShot) => {
+					this.setState({
+						currentUser: {
+							id: snapShot.id,
+							...snapShot.data()
+						}
+					});
+					console.log(this.state.currentUser);
+				});
+			} else {
+				this.setState({ currentUser: userAuth });
+			}
 		});
 	}
 

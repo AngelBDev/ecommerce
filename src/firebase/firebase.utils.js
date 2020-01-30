@@ -1,5 +1,4 @@
 import * as firebase from 'firebase/app';
-
 import 'firebase/firestore';
 import 'firebase/auth';
 
@@ -14,15 +13,38 @@ const firebaseConfig = {
 	measurementId: 'G-Y5FGGFDLDB'
 };
 
+const providerGoogle = new firebase.auth.GoogleAuthProvider();
+
 firebase.initializeApp(firebaseConfig);
+
+providerGoogle.setCustomParameters({ prompt: 'select_account' });
 
 export const firestore = firebase.firestore();
 export const auth = firebase.auth();
 
-const providerGoogle = new firebase.auth.GoogleAuthProvider();
-
-providerGoogle.setCustomParameters({ prompt: 'select_account' });
-
 export const signInWithGoogle = () => auth.signInWithPopup(providerGoogle);
+
+export const createUserProfileDocument = async (userAuth, otherData) => {
+	if (!userAuth) {
+		console.log(' no user');
+		return;
+	}
+
+	const userRef = firestore.doc(`users/${userAuth.uid}`);
+	const userSnapShot = await userRef.get();
+
+	if (!userSnapShot.exists) {
+		console.log(userAuth);
+		const { displayName, email } = userAuth;
+		const createdAt = new Date();
+
+		try {
+			await userRef.set({ displayName, email, createdAt, ...otherData });
+		} catch (error) {
+			console.log('Error creating the user ' + error.message);
+		}
+	}
+	return userRef;
+};
 
 export default firebase;
